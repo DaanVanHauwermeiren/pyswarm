@@ -1,34 +1,40 @@
 from functools import partial
 import numpy as np
 
+
 def _obj_wrapper(func, args, kwargs, x):
     return func(x, *args, **kwargs)
 
+
 def _is_feasible_wrapper(func, x):
-    return np.all(func(x)>=0)
+    return np.all(func(x) >= 0)
+
 
 def _cons_none_wrapper(x):
     return np.array([0])
 
+
 def _cons_ieqcons_wrapper(ieqcons, args, kwargs, x):
     return np.array([y(x, *args, **kwargs) for y in ieqcons])
 
+
 def _cons_f_ieqcons_wrapper(f_ieqcons, args, kwargs, x):
     return np.array(f_ieqcons(x, *args, **kwargs))
-    
+
+
 def pso(func, bounds, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
-          swarmsize=100, omega=0.5, phip=0.5, phig=0.5, maxiter=100,
-          minstep=1e-12, minfunc=1e-12, debug=False):
+        swarmsize=100, omega=0.5, phip=0.5, phig=0.5, maxiter=100,
+        minstep=1e-12, minfunc=1e-12, debug=False):
     """
     Perform a particle swarm optimization (PSO)
-   
+
     Parameters
     ==========
     func : function
         The function to be minimized
     bounds: tuple array
         The bounds of the design variable(s). In form [(lower, upper), ..., (lower, upper)]
-   
+
     Optional
     ========
     ieqcons : list
@@ -71,7 +77,7 @@ def pso(func, bounds, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
     particle_output : boolean
         Whether to include the best per-particle position and the objective
         values at those.
-   
+
     Returns
     =======
     g : array
@@ -82,7 +88,7 @@ def pso(func, bounds, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
         The best known position per particle
     pf: arrray
         The objective values at each position in p
-   
+
     """
     lower_bound, upper_bound = [], []
     for variable_bounds in bounds:
