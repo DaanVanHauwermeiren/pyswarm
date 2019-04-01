@@ -86,3 +86,32 @@ print('    stress         : {}'.format(stress(xopt4, *args)))
 print('    buckling stress: {}'.format(buckling_stress(xopt4, *args)))
 print('    deflection     : {}'.format(deflection(xopt4, *args)))
 
+
+print('Example minimisation with non float parameters')
+def myfunc(x):
+    return np.sum(x**2)
+
+bounds = [(-3, 3), (-3, 3), [-3, 3]]
+
+def transform_pars(pars):
+    return (
+        # regular float
+        pars[0],
+        # only integers
+        round(pars[1]),
+        # only in the predefined list
+        param_2_possibilities[np.argmin(np.abs(param_2_possibilities - pars[2]))]
+    )
+
+param_2_possibilities = np.array([
+    -2, -1, -.1, .01, .2, .3, .35, 2, 3
+])
+
+xopt, fopt = pso(myfunc, bounds, transform_pars=transform_pars,
+                        #debug=True, particle_output=True,
+                        maxiter=100, swarmsize=100, processes=1)
+
+print('The optimum is at:')
+print('    {}'.format(xopt))
+print('Optimal function value:')
+print('    myfunc: {}'.format(fopt))
